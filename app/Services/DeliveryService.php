@@ -9,8 +9,9 @@ class DeliveryService
 {
     public function calculateFastDelivery($shipment)
     {
+        \Log::info('calculateFastDelivery', $shipment);
         $factory = new FastDeliveryServiceFactory();
-        $service = $factory->createService($shipment->base_url);
+        $service = $factory->createService($shipment);
 
        return  $service->calculateDelivery($shipment);
 
@@ -19,11 +20,10 @@ class DeliveryService
 
     public function calculateSlowDelivery($shipment)
     {
+        \Log::info('calculateSlowDelivery', $shipment);
         $factory = new SlowDeliveryServiceFactory();
-        $service = $factory->createService($shipment->base_url);
+        $service = $factory->createService($shipment);
 
         return  $service->calculateDelivery($shipment);
-
-
     }
 }

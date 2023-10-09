@@ -4,25 +4,33 @@ class SlowDeliveryService
 {
     public function calculateDelivery($shipment)
     {
+       \Log::info('SlowDeliveryService', $shipment);
         // Extract input values
-        $sourceKladr = $shipment->sourceKladr;
-        $targetKladr = $shipment->targetKladr;
-        $weight = $shipment->weight;
+        $sourceKladr = $shipment['sourceKladr'];
+        $targetKladr = $shipment['targetKladr'];
+        $weight = $shipment['weight'];
 
-        // Calculate price coefficient
-        $basePrice = 150.0; // Base price for "Slow" delivery
-        $coefficient = 1.1; // Some coefficient, adjust as needed
-        $price = $basePrice * $coefficient;
+        // Calculate price
+        $basePrice = 50.0; // Base price for "Fast" delivery
+        $price = $basePrice + ($weight * 2); // Adjust the price based on weight
 
         // Calculate delivery date
         $currentDate = now();
-        $deliveryDate = $currentDate->addDays(7); // Delivery in 7 days
+        $deliveryDate = $currentDate->addDays(2); // Delivery in 2 days
+
+        // Check if it's past 18:00, if so, add one more day for delivery
+        if ($currentDate->hour >= 18) {
+            $deliveryDate->addDay();
+        }
 
         // Return the result in the specified format
         return [
-            'coefficient' => $coefficient,
-            'date' => $deliveryDate->toDateString(),
-            'error' => null, // No error
+            'price' => $price,
+            'period' => 2, // 2 days
+            'delivery_date' => $deliveryDate->format('Y-m-d H:i:s'), // Format the date as 'YYYY-MM-DD HH:MM:SS
+            'sourceKladr' => $sourceKladr,
+            'targetKladr' => $targetKladr,
+            'weight' => $weight,
         ];
     }
 }

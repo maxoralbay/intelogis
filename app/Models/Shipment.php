@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
-class Shipment
+use Illuminate\Database\Eloquent\Model;
+
+class Shipment extends Model
 {
     protected $fillable = [
         'sourceKladr',

@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
-class DeliveryResult
+
+use Illuminate\Database\Eloquent\Model;
+
+class DeliveryResult extends Model
 {
     protected $fillable = [
         'shipment_id',

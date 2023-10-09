@@ -6,9 +6,9 @@ use App\Classes\DeliveryServiceFactory;
 use App\Services\FastDeliveryService;
 class FastDeliveryServiceFactory extends DeliveryServiceFactory
 {
-    public function createService($base_url): FastDeliveryService
+    public function createService($shipment): FastDeliveryService
     {
         // TODO: Implement createService() method.
-        return new FastDeliveryService($base_url);
+        return new FastDeliveryService($shipment);
     }
 }

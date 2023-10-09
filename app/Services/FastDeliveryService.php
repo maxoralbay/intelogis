@@ -5,9 +5,9 @@ class FastDeliveryService
     public function calculateDelivery($shipment)
     {
         // Extract input values
-        $sourceKladr = $shipment->sourceKladr;
-        $targetKladr = $shipment->targetKladr;
-        $weight = $shipment->weight;
+        $sourceKladr = $shipment['sourceKladr'];
+        $targetKladr = $shipment['targetKladr'];
+        $weight = $shipment['weight'];
 
         // Calculate price
         $basePrice = 50.0; // Base price for "Fast" delivery
@@ -26,7 +26,10 @@ class FastDeliveryService
         return [
             'price' => $price,
             'period' => 2, // 2 days
-            'error' => null, // No error
+            'delivery_date' => $deliveryDate->format('Y-m-d H:i:s'), // Format the date as 'YYYY-MM-DD HH:MM:SS
+            'sourceKladr' => $sourceKladr,
+            'targetKladr' => $targetKladr,
+            'weight' => $weight,
         ];
     }
 }

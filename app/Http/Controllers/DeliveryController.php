@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DeliveryResult;
 use App\Services\DeliveryService;
 use App\Models\Shipment;
+use Illuminate\Http\Request;
 
 class DeliveryController extends Controller
 {
@@ -16,42 +18,78 @@ class DeliveryController extends Controller
 
     /***
      *
-     * @param Shipment $shipment
+     * @param
      * @return \Illuminate\Http\JsonResponse
      *
      */
-    public function calculateFastDelivery(Shipment $shipment)
+    public function calculateFastDelivery()
     {
-        $result = $this->deliveryService->calculateFastDelivery($shipment);
-        DeliveryResult::create([
-            'shipment_id' => $shipment->id,
-            'service_type' => 'fast',
-            'price' => $result->price,
-            'delivery_date' => $result->date,
-            'error' => $result->error
-        ]);
-        return response()->json($result);
+        try {
+            request()->validate([
+                'sourceKladr' => 'required',
+                'targetKladr' => 'required',
+                'weight' => 'required'
+            ]);
+            $result = $this->deliveryService->calculateFastDelivery(request()->all());
+            \Log::info('calculateFastDelivery', $result);
+            $shipment =Shipment::create([
+                'sourceKladr' => $result['sourceKladr'],
+                'targetKladr' => $result['targetKladr'],
+                'weight' => $result['weight']
+            ]);
+            DeliveryResult::create([
+                'shipment_id' => $shipment->id,
+                'service_type' => 'fast',
+                'price' => $result['price'],
+                'delivery_date' => $result['delivery_date']
+            ]);
+            $result = [
+                'price' => $result['price'],
+                'date' => $result['delivery_date'],
+                'error' => null
+            ];
+            return response()->json($result);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+
     }
 
     /***
-     * @param Shipment $shipment
+     * @param
      * @return \Illuminate\Http\JsonResponse
      */
-     public function calculateSlowDelivery(Shipment $shipment)
+     public function calculateSlowDelivery()
     {
-        $result = $this->deliveryService->calculateSlowDelivery($shipment);
-
-        // Save the delivery result to the database
-        DeliveryResult::create([
-            'shipment_id' => $shipment->id,
-            'service_type' => 'slow',
-            'price' => $result['price'],
-            'delivery_date' => $result['date'],
-            'error' => $result['error'],
-        ]);
-
-        // Return the result to the user
-        return response()->json($result);
+        try {
+            request()->validate([
+                'sourceKladr' => 'required',
+                'targetKladr' => 'required',
+                'weight' => 'required'
+            ]);
+            \Log::info('calculateSlowDeliverySlow', request()->all());
+            $result = $this->deliveryService->calculateSlowDelivery(request()->all());
+            \Log::info(['calculateFastDeliverySlow', print_r($result, true)]);
+            $shipment =Shipment::create([
+                'sourceKladr' => $result['sourceKladr'],
+                'targetKladr' => $result['targetKladr'],
+                'weight' => $result['weight']
+            ]);
+            DeliveryResult::create([
+                'shipment_id' => $shipment->id,
+                'service_type' => 'slow',
+                'price' => $result['price'],
+                'delivery_date' => $result['delivery_date'],
+            ]);
+            $result = [
+                'price' => $result['price'],
+                'date' => $result['delivery_date'],
+                'error' => null
+            ];
+            return response()->json($result);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
     }
 
 }

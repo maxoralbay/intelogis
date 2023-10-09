@@ -1,66 +1,90 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+### Задача
+Требуется спроектировать модуль расчета стоимости доставки.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Есть две службы доставки:
 
-## About Laravel
+1. «Быстрая доставка»:
+   ```
+   base_url: string
+   @var sourceKladr string //кладр откуда везем
+   @var targetKladr string //кладр куда везем
+   @var weight float //вес отправления в кг
+   @return json
+   {
+   'price': float //стоимость
+   'period': int //количество дней начиная с сегодняшнего, но после 18.00
+   заявки не принимаются.
+   'error': string
+   }
+   ``` 
+2. 
+3. «Медленная доставка»:
+   имеет базовую стоимость 150р
+```
+   base_url: string
+   @var sourceKladr string //кладр откуда везем
+   @var targetKladr string //кладр куда везем
+   @var weight float //вес отправления в кг
+   @return json
+   {
+   'coefficient': float //коэффициент (конечная цена есть произведение
+   базовой стоимости и коэффициента)
+   'date': string //дата доставки в формате 2017-10-20
+   'error': string
+   }
+```
+Задача в том, чтобы получить для набора отправлений стоимость и сроки
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+доставки в контексте списка транспортных компаний и одной выбранной. Формат
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+полученных от транспортных компаний данных должен быть приведен к единому
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+виду
+(
+{
+'price': float //стоимость
+'date': string //дата доставки в формате 2017-10-20
+'error': string
+}
+).
+Набор данных с отправлениями можно создать произвольно, взаимодействие с
 
-## Learning Laravel
+сервисами транспортных компаний эмулировать. Наличие экранных форм
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+приветствуется, но не обязательно. Реализация предполагает решение задачи с
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+использованием основных паттернов ООП. Версия PHP — 7.0+, использование
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+реляционных баз данных возможно, но не обязательно.
 
-## Laravel Sponsors
+Модуль должен легко расширяться в контексте транспортных компаний и их
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+входных данных для расчета стоимости доставки.
 
-### Premium Partners
+Решение требуется предоставить в виде исходного кода, готового для
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+развертывания на веб-сервере (приложить файловый архив или ссылку на github,
 
-## Contributing
+например), при использовании БД приложить дампы созданных таблиц и указать тип
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+и версию использованной БД.
 
-## Code of Conduct
+### Резульат
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+url: http://examples.to/intelogis/public/api/v1/shipments/fast|slow
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```json
+{
+    "sourceKladr": "1234567890",
+    "targetKladr": "9876543210",
+    "weight": 5.6,
+    "base_url": "http://slow-delivery-service.com"
+}
+```
+```json
+{
+    "price": 61.2,
+    "date": "2023-10-11 07:23:08",
+    "error": null
+}
+```

@@ -7,9 +7,9 @@ use App\Services\SlowDeliveryService;
 
 class SlowDeliveryServiceFactory extends DeliveryServiceFactory
 {
-    public function createService($base_url): SlowDeliveryService
+    public function createService($shipment): SlowDeliveryService
     {
         // TODO: Implement createService() method.
-        return new SlowDeliveryService($base_url);
+        return new SlowDeliveryService($shipment);
     }
 }
